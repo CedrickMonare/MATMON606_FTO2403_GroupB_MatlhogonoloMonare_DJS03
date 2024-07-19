@@ -153,6 +153,34 @@ const BookApp = {
             this.loadMoreBooks();
         });
 
+        //Applies the filters to the list of books.
+    applyFilters(formData) {
+        const filters = Object.fromEntries(formData);
+        this.matches = books.filter(book => this.bookMatchesFilters(book, filters));
+        this.page = 1;
+        this.renderFilteredBooks();
+    },
+
+    //Checks if a book matches the given filters.
+    bookMatchesFilters(book, filters) {
+        const genreMatch = filters.genre === 'any' || book.genres.includes(filters.genre);
+        const titleMatch = filters.title.trim() === '' || book.title.toLowerCase().includes(filters.title.toLowerCase());
+        const authorMatch = filters.author === 'any' || book.author === filters.author;
+        return genreMatch && titleMatch && authorMatch;
+    },
+
+    //Renders the filtered list of books.
+    renderFilteredBooks() {
+        BookInteraction.showListMessage(this.matches.length === 0);
+        const bookPreviews = this.matches.slice(0, BOOKS_PER_PAGE).map(book => BookInteraction.createBookPreview(book));
+        const container = document.querySelector('[data-list-items]');
+        container.innerHTML = '';
+        BookInteraction.appendToList(bookPreviews, container);
+        BookInteraction.updateListButton(this.matches, this.page);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        BookInteraction.openOverlay('[data-search-overlay]', false);
+    },
+
         document.querySelector('[data-list-items]').addEventListener('click', (event) => {
             this.handleBookClick(event);
         });
