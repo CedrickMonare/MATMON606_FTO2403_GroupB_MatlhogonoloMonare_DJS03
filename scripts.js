@@ -185,3 +185,38 @@ const BookApp = {
             this.handleBookClick(event);
         });
     },
+
+ //Loads more books when the "Show more" button is clicked.
+    loadMoreBooks() {
+        const newBooks = this.matches.slice(this.page * BOOKS_PER_PAGE, (this.page + 1) * BOOKS_PER_PAGE).map(book => BookInteraction.createBookPreview(book));
+        BookInteraction.appendToList(newBooks, document.querySelector('[data-list-items]'));
+        this.page += 1;
+        BookInteraction.updateListButton(this.matches, this.page);
+    },
+
+    //Handles the click event on a book preview.
+    handleBookClick(event) {
+        const pathArray = Array.from(event.composedPath());
+        const previewNode = pathArray.find(node => node?.dataset?.preview);
+        if (previewNode) {
+            const activeBook = books.find(book => book.id === previewNode.dataset.preview);
+            if (activeBook) {
+                this.showBookDetails(activeBook);
+            }
+        }
+    },
+
+    //Shows the details of a selected book.
+    showBookDetails(book) {
+        BookInteraction.openOverlay('[data-list-active]', true);
+        document.querySelector('[data-list-blur]').src = book.image;
+        document.querySelector('[data-list-image]').src = book.image;
+        document.querySelector('[data-list-title]').innerText = book.title;
+        document.querySelector('[data-list-subtitle]').innerText = `${authors[book.author]} (${new Date(book.published).getFullYear()})`;
+        document.querySelector('[data-list-description]').innerText = book.description;
+    }
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    BookApp.initialize();
+});
