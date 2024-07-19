@@ -57,50 +57,48 @@ const BookInteraction = {
         }
     },
 
-document.querySelector('[data-list-button]').innerText = `Show more (${books.length - BOOKS_PER_PAGE})`
-document.querySelector('[data-list-button]').disabled = (matches.length - (page * BOOKS_PER_PAGE)) > 0
-
-document.querySelector('[data-list-button]').innerHTML = `
-    <span>Show more</span>
-    <span class="list__remaining"> (${(matches.length - (page * BOOKS_PER_PAGE)) > 0 ? (matches.length - (page * BOOKS_PER_PAGE)) : 0})</span>
-`
-
-document.querySelector('[data-search-cancel]').addEventListener('click', () => {
-    document.querySelector('[data-search-overlay]').open = false
-})
-
-document.querySelector('[data-settings-cancel]').addEventListener('click', () => {
-    document.querySelector('[data-settings-overlay]').open = false
-})
-
-document.querySelector('[data-header-search]').addEventListener('click', () => {
-    document.querySelector('[data-search-overlay]').open = true 
-    document.querySelector('[data-search-title]').focus()
-})
-
-document.querySelector('[data-header-settings]').addEventListener('click', () => {
-    document.querySelector('[data-settings-overlay]').open = true 
-})
-
-document.querySelector('[data-list-close]').addEventListener('click', () => {
-    document.querySelector('[data-list-active]').open = false
-})
-
-document.querySelector('[data-settings-form]').addEventListener('submit', (event) => {
-    event.preventDefault()
-    const formData = new FormData(event.target)
-    const { theme } = Object.fromEntries(formData)
-
-    if (theme === 'night') {
-        document.documentElement.style.setProperty('--color-dark', '255, 255, 255');
-        document.documentElement.style.setProperty('--color-light', '10, 10, 20');
-    } else {
-        document.documentElement.style.setProperty('--color-dark', '10, 10, 20');
-        document.documentElement.style.setProperty('--color-light', '255, 255, 255');
-    }
+  //Opens or closes an overlay.
+    openOverlay(selector, open) {
+        document.querySelector(selector).open = open;
+    },
     
-    document.querySelector('[data-settings-overlay]').open = false
-})
+    //Populates a select element with options.
+    populateSelectElement(selectElement, options, firstOptionText) {
+        const fragment = document.createDocumentFragment();
+        const firstOption = document.createElement('option');
+        firstOption.value = 'any';
+        firstOption.innerText = firstOptionText;
+        fragment.appendChild(firstOption);
+
+        for (const [id, name] of Object.entries(options)) {
+            const option = document.createElement('option');
+            option.value = id;
+            option.innerText = name;
+            fragment.appendChild(option);
+        }
+
+        selectElement.appendChild(fragment);
+    }
+};
+
+//The BookApp object manages the book application, including initialization and event handling.
+const BookApp = {
+    page: 1,
+    matches: books,
+
+    //Initializes the book application.
+    initialize() {
+        this.InitialBooks();
+        this.Filters();
+        this.EventListeners();
+        this.InitialTheme();
+    },
+
+    //Loads the initial set of books.
+    InitialBooks() {
+        const bookPreviews = this.matches.slice(0, BOOKS_PER_PAGE).map(book => BookInteraction.createBookPreview(book));
+        BookInteraction.appendToList(bookPreviews, document.querySelector('[data-list-items]'));
+    },
 
 document.querySelector('[data-search-form]').addEventListener('submit', (event) => {
     event.preventDefault()
