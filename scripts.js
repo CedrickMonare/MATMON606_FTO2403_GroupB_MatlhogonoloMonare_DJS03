@@ -18,8 +18,12 @@ const BookInteraction = {
         return element;
     },
 
-    starting.appendChild(element)
-}
+ //Appends a list of items to a container element.
+    appendToList(items, container) {
+        const fragment = document.createDocumentFragment();
+        items.forEach(item => fragment.appendChild(item));
+        container.appendChild(fragment);
+    },
 
 document.querySelector('[data-list-items]').appendChild(starting)
 
