@@ -36,20 +36,16 @@ const BookInteraction = {
         }
     },
     
-document.querySelector('[data-search-genres]').appendChild(genreHtml)
-
-const authorsHtml = document.createDocumentFragment()
-const firstAuthorElement = document.createElement('option')
-firstAuthorElement.value = 'any'
-firstAuthorElement.innerText = 'All Authors'
-authorsHtml.appendChild(firstAuthorElement)
-
-for (const [id, name] of Object.entries(authors)) {
-    const element = document.createElement('option')
-    element.value = id
-    element.innerText = name
-    authorsHtml.appendChild(element)
-}
+//Updates the "Show more" button based on the number of matches and the current page.
+    updateListButton(matches, page) {
+        const button = document.querySelector('[data-list-button]');
+        button.innerText = `Show more (${matches.length - BOOKS_PER_PAGE})`;
+        button.disabled = (matches.length - (page * BOOKS_PER_PAGE)) <= 0;
+        button.innerHTML = `
+            <span>Show more</span>
+            <span class="list__remaining"> (${Math.max(0, matches.length - (page * BOOKS_PER_PAGE))})</span>
+        `;
+    },
 
 document.querySelector('[data-search-authors]').appendChild(authorsHtml)
 
