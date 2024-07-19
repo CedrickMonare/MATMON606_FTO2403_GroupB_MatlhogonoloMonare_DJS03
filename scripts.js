@@ -25,21 +25,17 @@ const BookInteraction = {
         container.appendChild(fragment);
     },
 
-document.querySelector('[data-list-items]').appendChild(starting)
-
-const genreHtml = document.createDocumentFragment()
-const firstGenreElement = document.createElement('option')
-firstGenreElement.value = 'any'
-firstGenreElement.innerText = 'All Genres'
-genreHtml.appendChild(firstGenreElement)
-
-for (const [id, name] of Object.entries(genres)) {
-    const element = document.createElement('option')
-    element.value = id
-    element.innerText = name
-    genreHtml.appendChild(element)
-}
-
+//Updates the theme of the page.
+    updateTheme(theme) {
+        if (theme === 'night') {
+            document.documentElement.style.setProperty('--color-dark', '255, 255, 255');
+            document.documentElement.style.setProperty('--color-light', '10, 10, 20');
+        } else {
+            document.documentElement.style.setProperty('--color-dark', '10, 10, 20');
+            document.documentElement.style.setProperty('--color-light', '255, 255, 255');
+        }
+    },
+    
 document.querySelector('[data-search-genres]').appendChild(genreHtml)
 
 const authorsHtml = document.createDocumentFragment()
